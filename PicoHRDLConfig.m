@@ -1,19 +1,33 @@
-%% PicoHRDL Config Configure path information
+%% PicoHRDLConfig Configure path information
 % Configures paths according to platforms and loads information from
-% prototype files for the picohrdl driver. The folder 
+% prototype files for PicoLog High Resolution data loggers. The folder 
 % that this file is located in must be added to the MATLAB path.
 %
 % Platform Specific Information:-
 %
 % Microsoft Windows: Download the Software Development Kit installer from
 % the <a href="matlab: web('https://www.picotech.com/downloads')">Pico Technology Download software and manuals for oscilloscopes and data loggers</a> page.
+% 
+% Linux: Follow the instructions to install the libpicohrdl package from the <a href="matlab:
+% web('https://www.picotech.com/downloads/linux')">Pico Technology Linux Software & Drivers for Oscilloscopes and Data Loggers</a> page.
+%
+% Apple Mac OS X: Follow the instructions to install the PicoScope 6
+% application from the <a href="matlab: web('https://www.picotech.com/downloads')">Pico Technology Download software and manuals for oscilloscopes and data loggers</a> page.
+% Optionally, create a 'maci64' folder in the same directory as this file
+% and copy the following files into it:
+%
+% * libpicohrdl.dylib and any other libpicohrdl library files
+%
+% Contact our Technical Support team via the <a href="matlab: web('https://www.picotech.com/tech-support/')">Technical Enquiries form</a> for further assistance.
 %
 % Run this script in the MATLAB environment prior to connecting to the 
 % device.
 %
 % This file can be edited to suit application requirements.
+%
+% *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
 
-%% Set Path to Shared Libraries
+%% Set path to shared libraries
 % Set paths to shared library files according to the operating system and
 % architecture.
 
@@ -41,7 +55,29 @@ end
 
 % Set the path according to operating system.
 
-if(ispc())
+if (ismac())
+    
+    % Libraries (including wrapper libraries) are stored in the PicoScope
+    % 6 App folder. Add locations of library files to environment variable.
+    
+    setenv('DYLD_LIBRARY_PATH', '/Applications/PicoScope6.app/Contents/Resources/lib');
+    
+    if(contains(getenv('DYLD_LIBRARY_PATH'), '/Applications/PicoScope6.app/Contents/Resources/lib'))
+       
+        addpath('/Applications/PicoScope6.app/Contents/Resources/lib');
+        
+    else
+        
+        warning('PicoHRDLConfig:LibraryPathNotFound','Locations of libraries not found in DYLD_LIBRARY_PATH');
+        
+    end
+    
+elseif (isunix())
+	    
+    % Edit to specify location of .so files or place .so files in same directory
+    addpath('/opt/picoscope/lib/'); 
+		
+elseif (ispc())
     
     % Microsoft Windows operating systems
     
@@ -90,8 +126,9 @@ else
     
 end
 
-%% Load Enumeration Information
+%% Load enumerations and structure information
+% Enumerations and structures are used by certain shared library functions.
 
-[~, ~, picoHRDLEnuminfo, ~] = picohrdlMFile;
-
-
+% Find prototype file names based on architecture.
+picoHRDLConfigInfo.picohrdlMFile = str2func(strcat('picohrdlMFile_', picoHRDLConfigInfo.archStr));
+[picohrdlMethodinfo, picohrdlStructs, picohrdlEnuminfo, picohrdlThunkLibName] = picoHRDLConfigInfo.picohrdlMFile(); 
