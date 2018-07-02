@@ -135,7 +135,7 @@ fprintf('\n');
 
 [status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, 0);
 
-%% Get minimum and maximum ADC counts available for the device
+%% Get minimum and maximum ADC counts available for the channel
 
 minAdcPtr = libpointer('int32Ptr', 0);
 maxAdcPtr = libpointer('int32Ptr', 0) ;
