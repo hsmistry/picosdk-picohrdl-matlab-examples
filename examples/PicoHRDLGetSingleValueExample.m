@@ -1,107 +1,192 @@
-%% PicoHRDL Driver MATLAB Example
-% This script demonstrates how to call the API functions for the picohrdl
-% driver from MATLAB.
+%% PicoLog High-Resolution Data Logger Series Single Value Example
+%
+% This script demonstrates how to:
+%
+% * Open a connection to a PicoLog High-Resolution Data Logger
+% * Display unit information
+% * Take readings
+% * Plot data
+% * Close the connection to the unit
+%
+% Please refer to the
+% <https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf ADC-20/ADC-24 High-Resolution Data Logger's Guide> for further information.
+% This file can be edited to suit application requirements.
+%
+% *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
 
 %% Clear console and close figures
 
 clc;
 close all;
 
-%% Load Configuration Information into Base Workspace
+%% Load configuration information
 
 PicoHRDLConfig;
 
-%% Load the library
+%% Define any variables to be used throughout the script
 
-loadlibrary('picohrdl.dll', @picohrdlMFile);
-%libfunctionsview('picohrdl'); % Display library functions
+hasDigitalPorts = PicoHRDLConstants.FALSE;
+
+%% Load shared library
+
+% Indentify architecture and obtain function handle for the correct
+% prototype file.
+    
+archStr = computer('arch');
+
+picoHRDLMFile = str2func(strcat('picohrdlMFile_', archStr));
+
+if (~libisloaded('picohrdl'))
+
+	if ismac()
+	   
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.dylib', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.dylib not loaded.');
+		
+		end
+		
+	elseif isunix()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.so', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.so not loaded.');
+		
+		end
+		
+	elseif ispc()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('picohrdl.dll', picoHRDLMFile);
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library picohrdl.dll not loaded.');
+		
+		end
+		
+	else
+		
+		error('PicoHRDLGetSingleValueExample:OSNotSupported', 'Operating system not supported, please contact support@picotech.com');
+		
+	end
+	
+end
 
 %% Open a connection
 
-handle = calllib('picohrdl', 'HRDLOpenUnit');
+hrdlHandle = calllib('picohrdl', 'HRDLOpenUnit');
 
-if (handle >= 1)
+if (hrdlHandle >= 1)
     
-    disp(handle);
+    fprintf('Device handle: %d\n', hrdlHandle);
     
-elseif (handle == 0)
+elseif (hrdlHandle == 0)
    
-    error('PicoHRDLExample:NoUnitFound', 'No device found.');
+    error('PicoHRDLGetSingleValueExample:UnitNotFound', 'No device found.');
     
 else
     
-    error('PicoHRDLExample:FailedToOpen', 'Failed to open device.');
+    error('PicoHRDLGetSingleValueExample:FailedToOpen', 'Failed to open device.');
     
 end
 
-%% Display Unit Information
+%% Display unit information
 
 infoString = blanks(100);
+status.getInfo = zeros(7, 1, 'int16');
 
-for i = 0:7
+fprintf('\nUnit information:-\n\n');
+
+information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Variant: ', 'Batch/Serial: ', 'Cal. date: ', 'Kernel driver version: '};
+
+for i = 0:(length(information) - 1)
     
-    [status, infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', handle, infoString, length(infoString), i);
-    disp(infoString1);
+    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, length(infoString), i);
     
+    disp([information{i + 1} infoString1]);
+    
+    % Only the ADC-24 has digital ports
+    if (i == 3)
+    
+        if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
+           
+            hasDigitalPorts = PicoHRDLConstants.TRUE;
+            
+        else
+            
+            hasDigitalPorts = PicoHRDLConstants.FALSE;
+            
+        end
+        
+    end
+        
 end
 
-%% Set Mains Noise Rejection to 50Hz
+%% Set mains noise rejection to 50 Hz
 
-[status] = calllib('picohrdl', 'HRDLSetMains', handle, 0);
+[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, 0);
 
 
 %% Get minimum and maximum ADC counts available for the device
 
 minAdcPtr = libpointer('int32Ptr', 0);
 maxAdcPtr = libpointer('int32Ptr', 0) ;
-channel = picoHRDLEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_2;
+channel   = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
 
-[status] = calllib('picohrdl', 'HRDLGetMinMaxAdcCounts', handle, minAdcPtr, maxAdcPtr, channel);
+[status.getMinMaxAdcCounts] = calllib('picohrdl', 'HRDLGetMinMaxAdcCounts', hrdlHandle, ...
+    minAdcPtr, maxAdcPtr, channel);
 
 minAdc = minAdcPtr.Value;
 maxAdc = double(maxAdcPtr.Value);
 
-%% Get Single Value
+%% Get single value
 
-range = picoHRDLEnuminfo.enHRDLRange.HRDL_1250_MV;
-conversionTime = picoHRDLEnuminfo.enHRDLConversionTime.HRDL_100MS;
+range = picohrdlEnuminfo.enHRDLRange.HRDL_1250_MV;
+conversionTime = picohrdlEnuminfo.enHRDLConversionTime.HRDL_100MS;
 singleEnded = 1;
 overflowPtr = libpointer('int16Ptr', 0);
 valuePtr = libpointer('int32Ptr', 0);
 
-readings = zeros(10, 1);
+readings = zeros(50, 1);
 
 for i = 1:length(readings)
 
-    [status] = calllib('picohrdl', 'HRDLGetSingleValue', handle, channel, range, conversionTime, singleEnded, overflowPtr, valuePtr);
+    [status.getSingleValue] = calllib('picohrdl', 'HRDLGetSingleValue', hrdlHandle, channel, range, conversionTime, singleEnded, ...
+                                overflowPtr, valuePtr);
 
     overflow = overflowPtr.Value;
     value = double(valuePtr.Value); % Raw ADC Count
 
-    % Convert value to millivolts
-    vMax = 2500 / pow2(range);
-    convertedValue = (value / maxAdc) * vMax;
-    
-    readings(i, 1) = convertedValue;
+    % Convert value to volts
+    [readings(i, 1), vMax] = picohrdladc2volts(value, range, maxAdc);
 
-    pause(0.1); % 100 ms to 
+    pause(0.1); % Wait 100 ms
     
 end
 
 %% Plot the data
 
-figure;
-plot(readings);
-title('Voltage vs. Time Plot');
-ylim([0 vMax]);
-xlabel('Reading');
-ylabel('Voltage (mV)');
-legend('Channel 2')
-grid on;
+figure1 = figure('Name','PicoLog High-Resolution Data Logger Example - Single Values Capture', 'NumberTitle','off');
+axes1 = axes('Parent', figure1);
+
+samples = (1:length(readings));
+
+plot(axes1, samples, readings);
+title(axes1, 'Voltage vs. Sample number')
+ylabel(axes1, 'Voltage (V)');
+ylim(axes1, [-vMax vMax]);
+grid(axes1, 'on');
 
 %% Close the connection
 
-closeStatus = calllib('picohrdl', 'HRDLCloseUnit', handle);
+closeStatus = calllib('picohrdl', 'HRDLCloseUnit', hrdlHandle);
 
 %% Unload the library
 
