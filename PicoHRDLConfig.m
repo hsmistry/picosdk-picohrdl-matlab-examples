@@ -1,6 +1,6 @@
 %% PicoHRDLConfig Configure path information
 % Configures paths according to platforms and loads information from
-% prototype files for PicoLog High Resolution data loggers. The folder 
+% prototype files for PicoLog High-Resolution data loggers. The folder 
 % that this file is located in must be added to the MATLAB path.
 %
 % Platform Specific Information:-
