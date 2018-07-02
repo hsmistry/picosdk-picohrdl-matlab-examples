@@ -129,10 +129,11 @@ for i = 0:(length(information) - 1)
         
 end
 
+fprintf('\n');
+
 %% Set mains noise rejection to 50 Hz
 
 [status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, 0);
-
 
 %% Get minimum and maximum ADC counts available for the device
 
@@ -156,6 +157,8 @@ valuePtr = libpointer('int32Ptr', 0);
 
 readings = zeros(50, 1);
 
+disp('Starting data collection...');
+
 for i = 1:length(readings)
 
     [status.getSingleValue] = calllib('picohrdl', 'HRDLGetSingleValue', hrdlHandle, channel, range, conversionTime, singleEnded, ...
@@ -170,6 +173,8 @@ for i = 1:length(readings)
     pause(0.1); % Wait 100 ms
     
 end
+
+disp('Data collection complete.');
 
 %% Plot the data
 
