@@ -18,6 +18,10 @@ classdef PicoHRDLConstants
         TRUE = 1;
         FALSE = 0;
         
+        % Mains rejection
+        MAINS_50_HZ = 0;
+        MAINS_60_HZ = 1;
+        
     end
     
     
