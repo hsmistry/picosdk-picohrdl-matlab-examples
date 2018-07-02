@@ -2,6 +2,13 @@
 
 *picosdk-picohrdl-matlab-examples* provides a MATLAB example demonstrating how to call shared library functions to acquire data from the PicoLog High Resolution Data Loggers.
 
+## Supported models
+
+The examples will work with the following models:
+
+* ADC-20
+* ADC-24
+
 ## Getting started
 
 ### Prerequisites
