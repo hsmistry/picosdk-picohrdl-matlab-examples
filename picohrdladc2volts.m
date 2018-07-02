@@ -11,8 +11,9 @@ function [volts, vMax] = picohrdladc2volts(values, range, maxValue)
 % Copyright © 2018 Pico Technology Ltd. See LICENSE file for terms.
 
     % Validate input parameters.
-    validateattributes(values, {'numeric'}, {'real', 'finite', 'nonnegative', 'nonnan'});
-    validateattributes(maxValue, {'numeric'}, {'scalar', 'integer', 'positive'});
+    validateattributes(values, {'numeric'}, {'real', 'finite', 'nonnan'});
+    validateattributes(values, {'numeric'}, {'scalar', 'nonnegative', 'integer'});
+    validateattributes(maxValue, {'numeric'}, {'scalar', 'integer'});
     
     vMax = 2.5 / pow2(range);
     % Convert raw data.
