@@ -22,7 +22,12 @@ classdef PicoHRDLConstants
         MAINS_50_HZ = 0;
         MAINS_60_HZ = 1;
         
+        % Define the number of channels
+        ADC_20_DIFFERENTIAL_CHANNELS = 4;
+        ADC_20_SINGLE_ENDED_CHANNELS = 8;
+        
+        ADC_24_DIFFERENTIAL_CHANNELS = 8;
+        ADC_24_SINGLE_ENDED_CHANNELS = 16;
     end
-    
     
 end
