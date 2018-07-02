@@ -1,6 +1,7 @@
-function volts = picohrdladc2volts(values, range, maxValue)
+function [volts, vMax] = picohrdladc2volts(values, range, maxValue)
 % PICOHRDLADC2VOLTS Converts ADC values to volts for PicoLog
-% High-Resolution Data Loggers.
+% High-Resolution Data Loggers and also provides the maximum voltage for
+% the range selected.
 %
 % values - raw ADC value(s).
 % range - the enHRDLRange enumeration corresponding to the voltage range
