@@ -29,8 +29,8 @@ PicoHRDLConfig;
 
 numChannels = 0; % The number of channels on the device.
 
-hasDigitalPorts = PicoHRDLConstants.FALSE;
-digitalPortsEnabled = PicoHRDLConstants.FALSE;
+hasDigitalPorts = PicoConstants.FALSE;
+digitalPortsEnabled = PicoConstants.FALSE;
 
 %% Load shared library
 
@@ -122,17 +122,17 @@ for i = 0:(length(information) - 1)
     
         if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
            
-            hasDigitalPorts = PicoHRDLConstants.TRUE;
+            hasDigitalPorts = PicoConstants.TRUE;
             numChannels = PicoHRDLConstants.ADC_24_SINGLE_ENDED_CHANNELS;
             
         elseif (infoString1 == PicoHRDLConstants.MODEL_ADC_20)
             
-            hasDigitalPorts = PicoHRDLConstants.FALSE;
+            hasDigitalPorts = PicoConstants.FALSE;
             numChannels = PicoHRDLConstants.ADC_20_SINGLE_ENDED_CHANNELS;
             
         else
             
-            hasDigitalPorts = PicoHRDLConstants.FALSE;
+            hasDigitalPorts = PicoConstants.FALSE;
             numChannels = 0;
             
         end
@@ -150,9 +150,9 @@ fprintf('\n');
 %% Set channel 
 
 channel1        = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
-ch1Enabled      = PicoHRDLConstants.TRUE;
+ch1Enabled      = PicoConstants.TRUE;
 ch1Range        = picohrdlEnuminfo.enHRDLRange.HRDL_2500_MV;
-ch1SingleEnded  = PicoHRDLConstants.TRUE;
+ch1SingleEnded  = PicoConstants.TRUE;
 
 [status.setAnalogInCh1] = calllib('picohrdl', 'HRDLSetAnalogInChannel', hrdlHandle, channel1, ch1Enabled, ch1Range, ch1SingleEnded);
 
@@ -181,7 +181,7 @@ if (hasDigitalPorts > 0)
     
     if (enabledDigitalIn > 0)
        
-        digitalPortsEnabled = PicoHRDLConstants.TRUE;
+        digitalPortsEnabled = PicoConstants.TRUE;
         
     end
     
@@ -201,7 +201,7 @@ numEnabledChannels = numEnabledChPtr.Value;
 
 % Update the number of enabled channels if a digital port has been set as
 % an input (ADC-24 only).
-if (hasDigitalPorts == PicoHRDLConstants.TRUE && digitalPortsEnabled == 1)
+if (hasDigitalPorts == PicoConstants.TRUE && digitalPortsEnabled == 1)
    
     numEnabledChannels = numEnabledChannels + 1;
     

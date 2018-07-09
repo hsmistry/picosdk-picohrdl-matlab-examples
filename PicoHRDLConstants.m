@@ -14,10 +14,7 @@ classdef PicoHRDLConstants
         
         MODEL_ADC_20 = '20';
         MODEL_ADC_24 = '24';
-        
-        TRUE = 1;
-        FALSE = 0;
-        
+       
         % Mains rejection
         MAINS_50_HZ = 0;
         MAINS_60_HZ = 1;

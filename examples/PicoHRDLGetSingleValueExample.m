@@ -25,7 +25,7 @@ PicoHRDLConfig;
 
 %% Define any variables to be used throughout the script
 
-hasDigitalPorts = PicoHRDLConstants.FALSE;
+hasDigitalPorts = PicoConstants.FALSE;
 
 %% Load shared library
 
@@ -117,11 +117,11 @@ for i = 0:(length(information) - 1)
     
         if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
            
-            hasDigitalPorts = PicoHRDLConstants.TRUE;
+            hasDigitalPorts = PicoConstants.TRUE;
             
         else
             
-            hasDigitalPorts = PicoHRDLConstants.FALSE;
+            hasDigitalPorts = PicoConstants.FALSE;
             
         end
         

@@ -126,6 +126,40 @@ else
     
 end
 
+%% Set path for PicoScope Support Toolbox files if not installed
+% Set MATLAB Path to include location of PicoScope Support Toolbox
+% Functions and Classes if the Toolbox has not been installed. Installation
+% of the toolbox is only supported in MATLAB 2014b and later versions.
+
+% Check if PicoScope Support Toolbox is installed - using code based on
+% <http://stackoverflow.com/questions/6926021/how-to-check-if-matlab-toolbox-installed-in-matlab How to check if matlab toolbox installed in matlab>
+
+picoHRDLConfigInfo.psTbxName = 'PicoScope Support Toolbox';
+picoHRDLConfigInfo.v = ver; % Find installed toolbox information
+
+if (~any(strcmp(picoHRDLConfigInfo.psTbxName, {picoHRDLConfigInfo.v.Name})))
+   
+    warning('PicoHRDLConfig:PSTbxNotFound', 'PicoScope Support Toolbox not found, searching for folder.');
+    
+    % If the PicoScope Support Toolbox has not been installed, check to see
+    % if the folder is on the MATLAB path, having been downloaded via zip
+    % file or copied from the Microsoft Windows Pico SDK installer
+    % directory.
+    
+    picoHRDLConfigInfo.psTbxFound = strfind(path, picoHRDLConfigInfo.psTbxName);
+    
+    if (isempty(picoHRDLConfigInfo.psTbxFound))
+        
+        warning('PicoHRDLConfig:PSTbxDirNotFound', 'PicoScope Support Toolbox directory not found.');
+        web('https://uk.mathworks.com/matlabcentral/fileexchange/53681-picoscope-support-toolbox');
+            
+    end
+    
+end
+
+% Change back to the folder where the script was called from.
+cd(picoHRDLConfigInfo.workingDir);
+
 %% Load enumerations and structure information
 % Enumerations and structures are used by certain shared library functions.
 
