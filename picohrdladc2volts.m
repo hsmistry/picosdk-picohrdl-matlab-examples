@@ -17,6 +17,6 @@ function [volts, vMax] = picohrdladc2volts(values, range, maxValue)
     
     vMax = 2.5 / pow2(range);
     % Convert raw data.
-    volts = (double(values) / double(maxValue)) * vMax;
+    volts = (double(values) .* vMax) ./ double(maxValue);
 
 end
