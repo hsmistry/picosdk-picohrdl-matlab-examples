@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PicoLog High-Resolution Data Logger Series Single Value Example</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-07-11"><meta name="DC.source" content="PicoHRDLGetSingleValueExample.m"><style type="text/css">
+      --><title>PicoLog High-Resolution Data Logger Series Single Values Collection Example</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-07-11"><meta name="DC.source" content="PicoHRDLGetSingleValueExample.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -66,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>PicoLog High-Resolution Data Logger Series Single Value Example</h1><!--introduction--><p>This script demonstrates how to:</p><div><ul><li>Open a connection to a PicoLog High-Resolution Data Logger</li><li>Display unit information</li><li>Take readings</li><li>Plot data</li><li>Close the connection to the unit</li></ul></div><p>Please refer to the <a href="https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf">ADC-20/ADC-24 High-Resolution Data Logger's Guide</a> for further information. This file can be edited to suit application requirements.</p><p><b>Copyright:</b> &copy; 2016-2018 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear console and close any open figure windows</a></li><li><a href="#2">Load configuration information</a></li><li><a href="#3">Define any variables to be used throughout the script</a></li><li><a href="#4">Load shared library</a></li><li><a href="#5">Open a connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Set mains noise rejection to 50 Hz</a></li><li><a href="#8">Get minimum and maximum ADC counts available for the channel</a></li><li><a href="#9">Get single value</a></li><li><a href="#10">Plot the data</a></li><li><a href="#11">Close the connection</a></li><li><a href="#12">Unload the library</a></li></ul></div><h2 id="1">Clear console and close any open figure windows</h2><pre class="codeinput">clc;
+  </style></head><body><div class="content"><h1>PicoLog High-Resolution Data Logger Series Single Values Collection Example</h1><!--introduction--><p>This script demonstrates how to:</p><div><ul><li>Open a connection to a PicoLog High-Resolution Data Logger</li><li>Display unit information</li><li>Take readings</li><li>Plot data</li><li>Close the connection to the unit</li></ul></div><p>Please refer to the <a href="https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf">ADC-20/ADC-24 High-Resolution Data Logger's Guide</a> for further information. This file can be edited to suit application requirements.</p><p><b>Copyright:</b> &copy; 2016-2018 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear Command Window and close any open figure windows</a></li><li><a href="#2">Load configuration information</a></li><li><a href="#3">Define any variables to be used throughout the script</a></li><li><a href="#4">Load shared library</a></li><li><a href="#5">Open a connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Set mains noise rejection to 50 Hz</a></li><li><a href="#8">Get minimum and maximum ADC counts available for the channel</a></li><li><a href="#9">Get single value</a></li><li><a href="#10">Plot the data</a></li><li><a href="#11">Close the connection</a></li><li><a href="#12">Unload the library</a></li></ul></div><h2 id="1">Clear Command Window and close any open figure windows</h2><pre class="codeinput">clc;
 close <span class="string">all</span>;
 </pre><h2 id="2">Load configuration information</h2><pre class="codeinput">PicoHRDLConfig;
 </pre><h2 id="3">Define any variables to be used throughout the script</h2><pre class="codeinput">hasDigitalPorts = PicoConstants.FALSE;
@@ -236,7 +236,7 @@ grid(axes1, <span class="string">'on'</span>);
 <span class="keyword">end</span>
 </pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
-%% PicoLog High-Resolution Data Logger Series Single Value Example
+%% PicoLog High-Resolution Data Logger Series Single Values Collection Example
 %
 % This script demonstrates how to:
 %
@@ -252,7 +252,7 @@ grid(axes1, <span class="string">'on'</span>);
 %
 % *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
 
-%% Clear console and close any open figure windows
+%% Clear Command Window and close any open figure windows
 
 clc;
 close all;

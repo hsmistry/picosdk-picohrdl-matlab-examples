@@ -1,4 +1,4 @@
-%% PicoLog High-Resolution Data Logger Series Single Value Example
+%% PicoLog High-Resolution Data Logger Series Single Values Collection Example
 %
 % This script demonstrates how to:
 %
@@ -14,7 +14,7 @@
 %
 % *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
 
-%% Clear console and close any open figure windows
+%% Clear Command Window and close any open figure windows
 
 clc;
 close all;
