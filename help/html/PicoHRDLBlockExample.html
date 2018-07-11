@@ -1,0 +1,683 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PicoLog High-Resolution Data Logger Series Block Capture Example</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-07-11"><meta name="DC.source" content="PicoHRDLBlockExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PicoLog High-Resolution Data Logger Series Block Capture Example</h1><!--introduction--><p>This script demonstrates how to:</p><div><ul><li>Open a connection to a PicoLog High-Resolution Data Logger</li><li>Display unit information</li><li>Set a channel</li><li>Start collection data for a block capture</li><li>Take readings</li><li>Plot data</li><li>Close the connection to the unit</li></ul></div><p>Please refer to the <a href="https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf">ADC-20/ADC-24 High-Resolution Data Logger's Guide</a> for further information. This file can be edited to suit application requirements.</p><p><b>Copyright:</b> &copy; 2018 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear console and close figures</a></li><li><a href="#2">Load configuration information</a></li><li><a href="#3">Define any variables to be used throughout the script</a></li><li><a href="#4">Load shared library</a></li><li><a href="#5">Open a connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Set mains noise rejection to 50 Hz</a></li><li><a href="#8">Set channel</a></li><li><a href="#9">Get minimum and maximum ADC counts available for the channel</a></li><li><a href="#10">Set digital I/O (ADC-24 only)</a></li><li><a href="#11">Query the number of enabled channels</a></li><li><a href="#12">Set the collection time interval</a></li><li><a href="#13">Collect a block of data</a></li><li><a href="#14">Retrieve the data</a></li><li><a href="#15">Plot the data</a></li><li><a href="#16">Turn off digital output (ADC-24 only)</a></li><li><a href="#17">Close the connection</a></li><li><a href="#18">Unload the library</a></li></ul></div><h2 id="1">Clear console and close figures</h2><pre class="codeinput">clc;
+close <span class="string">all</span>;
+</pre><h2 id="2">Load configuration information</h2><pre class="codeinput">PicoHRDLConfig;
+</pre><h2 id="3">Define any variables to be used throughout the script</h2><pre class="codeinput">numChannels = 0; <span class="comment">% The number of channels on the device.</span>
+
+hasDigitalPorts = PicoConstants.FALSE;
+digitalPortsEnabled = PicoConstants.FALSE;
+</pre><h2 id="4">Load shared library</h2><pre class="codeinput"><span class="comment">% Indentify architecture and obtain function handle for the correct</span>
+<span class="comment">% prototype file.</span>
+
+archStr = computer(<span class="string">'arch'</span>);
+
+picoHRDLMFile = str2func(strcat(<span class="string">'picohrdlMFile_'</span>, archStr));
+
+<span class="keyword">if</span> (~libisloaded(<span class="string">'picohrdl'</span>))
+
+	<span class="keyword">if</span> ismac()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'libpicohrdl.dylib'</span>, picoHRDLMFile, <span class="string">'alias'</span>, <span class="string">'picohrdl'</span>);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library libpicohrdl.dylib not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">elseif</span> isunix()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'libpicohrdl.so'</span>, picoHRDLMFile, <span class="string">'alias'</span>, <span class="string">'picohrdl'</span>);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library libpicohrdl.so not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">elseif</span> ispc()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'picohrdl.dll'</span>, picoHRDLMFile);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library picohrdl.dll not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">else</span>
+
+		error(<span class="string">'PicoHRDLGetSingleValueExample:OSNotSupported'</span>, <span class="string">'Operating system not supported, please contact support@picotech.com'</span>);
+
+	<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><h2 id="5">Open a connection</h2><pre class="codeinput">hrdlHandle = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLOpenUnit'</span>);
+hrdlHandle = int16(hrdlHandle);
+
+<span class="keyword">if</span> (hrdlHandle &gt;= 1)
+
+    fprintf(<span class="string">'Device handle: %d\n'</span>, hrdlHandle);
+
+<span class="keyword">elseif</span> (hrdlHandle == 0)
+
+    error(<span class="string">'PicoHRDLGetSingleValueExample:UnitNotFound'</span>, <span class="string">'No device found.'</span>);
+
+<span class="keyword">else</span>
+
+    error(<span class="string">'PicoHRDLGetSingleValueExample:FailedToOpen'</span>, <span class="string">'Failed to open device.'</span>);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Device handle: 16384
+</pre><h2 id="6">Display unit information</h2><pre class="codeinput">infoString = blanks(100);
+status.getInfo = zeros(7, 1, <span class="string">'int16'</span>);
+
+fprintf(<span class="string">'\nUnit information:-\n\n'</span>);
+
+information = {<span class="string">'Driver version: '</span>, <span class="string">'USB Version: '</span>, <span class="string">'Hardware version: '</span>, <span class="string">'Variant: '</span>, <span class="string">'Batch/Serial: '</span>, <span class="string">'Cal. date: '</span>, <span class="string">'Kernel driver version: '</span>};
+
+<span class="keyword">for</span> i = 0:(length(information) - 1)
+
+    [status.getInfo(i + 1, 1), infoString1] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetUnitInfo'</span>, hrdlHandle, infoString, length(infoString), i);
+
+    disp([information{i + 1} infoString1]);
+
+    <span class="comment">% Only the ADC-24 has digital ports</span>
+    <span class="keyword">if</span> (i == 3)
+
+        <span class="keyword">if</span> (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
+
+            hasDigitalPorts = PicoConstants.TRUE;
+            numChannels = PicoHRDLConstants.ADC_24_SINGLE_ENDED_CHANNELS;
+
+        <span class="keyword">elseif</span> (infoString1 == PicoHRDLConstants.MODEL_ADC_20)
+
+            hasDigitalPorts = PicoConstants.FALSE;
+            numChannels = PicoHRDLConstants.ADC_20_SINGLE_ENDED_CHANNELS;
+
+        <span class="keyword">else</span>
+
+            hasDigitalPorts = PicoConstants.FALSE;
+            numChannels = 0;
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput">
+Unit information:-
+
+Driver version: 2.0.0.459
+USB Version: USB 1.1
+Hardware version: 1
+Variant: 24
+Batch/Serial: EP207/010
+Cal. date: 02Nov16
+Kernel driver version: PICOPP.SYS V1.0
+
+</pre><h2 id="7">Set mains noise rejection to 50 Hz</h2><pre class="codeinput">[status.setMains] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetMains'</span>, hrdlHandle, int16(0));
+</pre><h2 id="8">Set channel</h2><pre class="codeinput">channel1        = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
+ch1Enabled      = PicoConstants.TRUE;
+ch1Range        = picohrdlEnuminfo.enHRDLRange.HRDL_2500_MV;
+ch1SingleEnded  = PicoConstants.TRUE;
+
+[status.setAnalogInCh1] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetAnalogInChannel'</span>, hrdlHandle, int16(channel1), int16(ch1Enabled), int16(ch1Range), int16(ch1SingleEnded));
+</pre><h2 id="9">Get minimum and maximum ADC counts available for the channel</h2><p>Odd and even numbered channels have a different max/min ADC count. For differential channels, the information is only required for the odd-numbered channel.</p><pre class="codeinput">ch1MinAdcPtr = libpointer(<span class="string">'int32Ptr'</span>, 0);
+ch1MaxAdcPtr = libpointer(<span class="string">'int32Ptr'</span>, 0) ;
+
+[status.getMinMaxAdcCounts] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetMinMaxAdcCounts'</span>, hrdlHandle, <span class="keyword">...</span>
+    ch1MinAdcPtr, ch1MaxAdcPtr, int16(channel1));
+
+ch1MinAdc = ch1MinAdcPtr.Value;
+ch1MaxAdc = double(ch1MaxAdcPtr.Value);
+</pre><h2 id="10">Set digital I/O (ADC-24 only)</h2><p>Set digital pin 1 to input, rest as outputs</p><pre class="codeinput"><span class="keyword">if</span> (hasDigitalPorts &gt; 0)
+
+    directionOut = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_3 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_4;
+    digitalOutPinState = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2; <span class="comment">% Set digital I/O to high, others will remain as low.</span>
+    enabledDigitalIn = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_1;
+
+    <span class="keyword">if</span> (enabledDigitalIn &gt; 0)
+
+        digitalPortsEnabled = PicoConstants.TRUE;
+
+    <span class="keyword">end</span>
+
+    [status.setDigitalIOChannel] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetDigitalIOChannel'</span>, hrdlHandle, int16(directionOut), int16(digitalOutPinState), int16(enabledDigitalIn));
+
+<span class="keyword">end</span>
+</pre><h2 id="11">Query the number of enabled channels</h2><p>This function returns the number of enabled analog channels on the device.</p><pre class="codeinput">numEnabledChPtr = libpointer(<span class="string">'int16Ptr'</span>, 0);
+
+[status.getNumberOfEnabledChannels] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetNumberOfEnabledChannels'</span>, hrdlHandle, numEnabledChPtr);
+
+numEnabledChannels = numEnabledChPtr.Value;
+
+<span class="comment">% Update the number of enabled channels if a digital port has been set as</span>
+<span class="comment">% an input (ADC-24 only).</span>
+<span class="keyword">if</span> (hasDigitalPorts == PicoConstants.TRUE &amp;&amp; digitalPortsEnabled == 1)
+
+    numEnabledChannels = numEnabledChannels + 1;
+
+<span class="keyword">end</span>
+
+disp([<span class="string">'Number of enabled channels: '</span>, num2str(numEnabledChannels)]);
+</pre><pre class="codeoutput">Number of enabled channels: 2
+</pre><h2 id="12">Set the collection time interval</h2><p>Collect data at 200 millisecond time intervals. All conversions should take place within the time specified. Digital inputs are instantaneous so do not need to be included when calculating the time interval.</p><pre class="codeinput">sampleIntervalMs = int32(200); <span class="comment">% Milliseconds</span>
+conversionTime   = int16(picohrdlEnuminfo.enHRDLConversionTime.HRDL_100MS);
+
+[status.setInterval] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetInterval'</span>, hrdlHandle, sampleIntervalMs, conversionTime);
+</pre><h2 id="13">Collect a block of data</h2><p>Collect data for 20 seconds</p><pre class="codeinput">numValuesPerChannel = 100;
+method              = picohrdlEnuminfo.enBlockMethod.HRDL_BM_BLOCK;
+isReady             = 0;
+
+fprintf(<span class="string">'Starting data collection...'</span>);
+
+[status.run] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLRun'</span>, hrdlHandle, int32(numValuesPerChannel), int16(method));
+
+<span class="comment">% Poll the driver until the device has completed data collection.</span>
+<span class="keyword">while</span> (isReady == PicoConstants.FALSE)
+
+    isReady = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLReady'</span>, hrdlHandle);
+    fprintf(<span class="string">'.'</span>);
+    pause(0.1);
+
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\nData collection complete.\n'</span>);
+</pre><pre class="codeoutput">Starting data collection......................................................................................................
+Data collection complete.
+</pre><h2 id="14">Retrieve the data</h2><pre class="codeinput"><span class="comment">% Allocate times and data buffer that will be large enough to accomodate</span>
+<span class="comment">% all the readings.</span>
+
+times       = [];
+timesPtr    = libpointer(<span class="string">'int32Ptr'</span>, zeros(numValuesPerChannel, 1, <span class="string">'int32'</span>));
+values      = [];
+valuesPtr   = libpointer(<span class="string">'int32Ptr'</span>, zeros(numEnabledChannels * numValuesPerChannel, 1, <span class="string">'int32'</span>));
+overflow    = 0;
+overflowPtr = libpointer(<span class="string">'int16Ptr'</span>, 0);
+
+numValuesCollectedPerChannel = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetTimesAndValues'</span>, hrdlHandle, timesPtr, valuesPtr, overflowPtr, int32(numValuesPerChannel));
+
+<span class="keyword">if</span> (numValuesCollectedPerChannel &gt; 0)
+
+    times = timesPtr.Value;
+    values = valuesPtr.Value;
+    overflow = overflowPtr.Value;
+
+<span class="keyword">else</span>
+
+    error(<span class="string">'PicoHRDLBlockExample:NoDataValuesCollected'</span>, <span class="string">'HRDLGetTimesAndValues() - No data values were collected.'</span>);
+
+<span class="keyword">end</span>
+
+<span class="comment">% Extract data for each channel</span>
+digitalData = values(1:numEnabledChannels:end);
+channel1Data = values(2:numEnabledChannels:end);
+
+<span class="comment">% Convert channel 1 data to volts</span>
+[channel1Data, vMaxCh1] = picohrdladc2volts(channel1Data, ch1Range, ch1MaxAdc);
+
+<span class="comment">% Digital data is stored as bit flags</span>
+digitalIO1Data = bitget(digitalData, 1, <span class="string">'int32'</span>);
+</pre><h2 id="15">Plot the data</h2><pre class="codeinput">figure1 = figure(<span class="string">'Name'</span>,<span class="string">'PicoLog High-Resolution Data Logger Example - Block Data Capture'</span>, <span class="string">'NumberTitle'</span>,<span class="string">'off'</span>);
+axes1 = axes(<span class="string">'Parent'</span>, figure1);
+
+<span class="keyword">if</span> (hasDigitalPorts &gt; 0)
+
+    subplot(2, 1, 1)
+
+<span class="keyword">end</span>
+
+<span class="comment">% Channel 1 data</span>
+plot(times, channel1Data);
+title(<span class="string">'Voltage vs. Time'</span>)
+xlabel(<span class="string">'Time (ms)'</span>);
+ylabel(<span class="string">'Voltage (V)'</span>);
+ylim([-vMaxCh1 vMaxCh1]);
+legend(<span class="string">'Ch. 1'</span>);
+grid <span class="string">on</span>;
+
+<span class="keyword">if</span> (hasDigitalPorts &gt; 0)
+
+    <span class="comment">% Digital I/O pin 1 data</span>
+    subplot(2, 1, 2)
+
+    plot(times, digitalIO1Data);
+    title(<span class="string">'Digital Input State vs. Time'</span>)
+    xlabel(<span class="string">'Time (ms)'</span>);
+    ylabel(<span class="string">'State'</span>);
+    ylim([-0.25 1.25]);
+    legend(<span class="string">'D1'</span>);
+    grid <span class="string">on</span>;
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="PicoHRDLBlockExample_01.png" alt=""> <h2 id="16">Turn off digital output (ADC-24 only)</h2><p>Set digital pin 2 to low</p><pre class="codeinput"><span class="keyword">if</span> (hasDigitalPorts &gt; 0)
+
+    directionOut = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_3 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_4;
+    digitalOutPinState = 0; <span class="comment">% Set digital I/O to high, others will remain as low.</span>
+    enabledDigitalIn = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_1;
+
+    [status.setDigitalIOChannel] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetDigitalIOChannel'</span>, hrdlHandle, int16(directionOut), int16(digitalOutPinState), int16(enabledDigitalIn));
+
+<span class="keyword">end</span>
+</pre><h2 id="17">Close the connection</h2><pre class="codeinput">status.closeUnit = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLCloseUnit'</span>, hrdlHandle);
+</pre><h2 id="18">Unload the library</h2><pre class="codeinput"><span class="keyword">if</span> (libisloaded(<span class="string">'picohrdl'</span>))
+
+    unloadlibrary(<span class="string">'picohrdl'</span>);
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% PicoLog High-Resolution Data Logger Series Block Capture Example
+%
+% This script demonstrates how to:
+%
+% * Open a connection to a PicoLog High-Resolution Data Logger
+% * Display unit information
+% * Set a channel
+% * Start collection data for a block capture
+% * Take readings
+% * Plot data
+% * Close the connection to the unit
+%
+% Please refer to the
+% <https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf ADC-20/ADC-24 High-Resolution Data Logger's Guide> for further information.
+% This file can be edited to suit application requirements.
+%
+% *Copyright:* © 2018 Pico Technology Ltd. See LICENSE file for terms.
+
+%% Clear console and close figures
+
+clc;
+close all;
+
+%% Load configuration information
+
+PicoHRDLConfig;
+
+%% Define any variables to be used throughout the script
+
+numChannels = 0; % The number of channels on the device.
+
+hasDigitalPorts = PicoConstants.FALSE;
+digitalPortsEnabled = PicoConstants.FALSE;
+
+%% Load shared library
+
+% Indentify architecture and obtain function handle for the correct
+% prototype file.
+    
+archStr = computer('arch');
+
+picoHRDLMFile = str2func(strcat('picohrdlMFile_', archStr));
+
+if (~libisloaded('picohrdl'))
+
+	if ismac()
+	   
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.dylib', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.dylib not loaded.');
+		
+		end
+		
+	elseif isunix()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.so', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.so not loaded.');
+		
+		end
+		
+	elseif ispc()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('picohrdl.dll', picoHRDLMFile);
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library picohrdl.dll not loaded.');
+		
+		end
+		
+	else
+		
+		error('PicoHRDLGetSingleValueExample:OSNotSupported', 'Operating system not supported, please contact support@picotech.com');
+		
+	end
+	
+end
+
+%% Open a connection
+
+hrdlHandle = calllib('picohrdl', 'HRDLOpenUnit');
+hrdlHandle = int16(hrdlHandle);
+
+if (hrdlHandle >= 1)
+    
+    fprintf('Device handle: %d\n', hrdlHandle);
+    
+elseif (hrdlHandle == 0)
+   
+    error('PicoHRDLGetSingleValueExample:UnitNotFound', 'No device found.');
+    
+else
+    
+    error('PicoHRDLGetSingleValueExample:FailedToOpen', 'Failed to open device.');
+    
+end
+
+%% Display unit information
+
+infoString = blanks(100);
+status.getInfo = zeros(7, 1, 'int16');
+
+fprintf('\nUnit information:-\n\n');
+
+information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Variant: ', 'Batch/Serial: ', 'Cal. date: ', 'Kernel driver version: '};
+
+for i = 0:(length(information) - 1)
+    
+    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, length(infoString), i);
+    
+    disp([information{i + 1} infoString1]);
+    
+    % Only the ADC-24 has digital ports
+    if (i == 3)
+    
+        if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
+           
+            hasDigitalPorts = PicoConstants.TRUE;
+            numChannels = PicoHRDLConstants.ADC_24_SINGLE_ENDED_CHANNELS;
+            
+        elseif (infoString1 == PicoHRDLConstants.MODEL_ADC_20)
+            
+            hasDigitalPorts = PicoConstants.FALSE;
+            numChannels = PicoHRDLConstants.ADC_20_SINGLE_ENDED_CHANNELS;
+            
+        else
+            
+            hasDigitalPorts = PicoConstants.FALSE;
+            numChannels = 0;
+            
+        end
+        
+    end
+        
+end
+
+fprintf('\n');
+
+%% Set mains noise rejection to 50 Hz
+
+[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, int16(0));
+
+%% Set channel 
+
+channel1        = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
+ch1Enabled      = PicoConstants.TRUE;
+ch1Range        = picohrdlEnuminfo.enHRDLRange.HRDL_2500_MV;
+ch1SingleEnded  = PicoConstants.TRUE;
+
+[status.setAnalogInCh1] = calllib('picohrdl', 'HRDLSetAnalogInChannel', hrdlHandle, int16(channel1), int16(ch1Enabled), int16(ch1Range), int16(ch1SingleEnded));
+
+%% Get minimum and maximum ADC counts available for the channel
+% Odd and even numbered channels have a different max/min ADC count.
+% For differential channels, the information is only required for the
+% odd-numbered channel.
+
+ch1MinAdcPtr = libpointer('int32Ptr', 0);
+ch1MaxAdcPtr = libpointer('int32Ptr', 0) ;
+
+[status.getMinMaxAdcCounts] = calllib('picohrdl', 'HRDLGetMinMaxAdcCounts', hrdlHandle, ...
+    ch1MinAdcPtr, ch1MaxAdcPtr, int16(channel1));
+
+ch1MinAdc = ch1MinAdcPtr.Value;
+ch1MaxAdc = double(ch1MaxAdcPtr.Value);
+
+%% Set digital I/O (ADC-24 only)
+% Set digital pin 1 to input, rest as outputs
+
+if (hasDigitalPorts > 0)
+    
+    directionOut = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_3 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_4;
+    digitalOutPinState = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2; % Set digital I/O to high, others will remain as low.
+    enabledDigitalIn = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_1;
+    
+    if (enabledDigitalIn > 0)
+       
+        digitalPortsEnabled = PicoConstants.TRUE;
+        
+    end
+    
+    [status.setDigitalIOChannel] = calllib('picohrdl', 'HRDLSetDigitalIOChannel', hrdlHandle, int16(directionOut), int16(digitalOutPinState), int16(enabledDigitalIn));
+    
+end
+
+%% Query the number of enabled channels
+% This function returns the number of enabled analog channels on the
+% device.
+
+numEnabledChPtr = libpointer('int16Ptr', 0);
+
+[status.getNumberOfEnabledChannels] = calllib('picohrdl', 'HRDLGetNumberOfEnabledChannels', hrdlHandle, numEnabledChPtr);
+
+numEnabledChannels = numEnabledChPtr.Value;
+
+% Update the number of enabled channels if a digital port has been set as
+% an input (ADC-24 only).
+if (hasDigitalPorts == PicoConstants.TRUE && digitalPortsEnabled == 1)
+   
+    numEnabledChannels = numEnabledChannels + 1;
+    
+end
+
+disp(['Number of enabled channels: ', num2str(numEnabledChannels)]);
+
+%% Set the collection time interval
+% Collect data at 200 millisecond time intervals. All conversions should take
+% place within the time specified. Digital inputs are instantaneous so do
+% not need to be included when calculating the time interval.
+
+sampleIntervalMs = int32(200); % Milliseconds
+conversionTime   = int16(picohrdlEnuminfo.enHRDLConversionTime.HRDL_100MS);
+
+[status.setInterval] = calllib('picohrdl', 'HRDLSetInterval', hrdlHandle, sampleIntervalMs, conversionTime);
+
+%% Collect a block of data
+% Collect data for 20 seconds
+
+numValuesPerChannel = 100;
+method              = picohrdlEnuminfo.enBlockMethod.HRDL_BM_BLOCK;
+isReady             = 0;
+
+fprintf('Starting data collection...');
+
+[status.run] = calllib('picohrdl', 'HRDLRun', hrdlHandle, int32(numValuesPerChannel), int16(method));
+
+% Poll the driver until the device has completed data collection.
+while (isReady == PicoConstants.FALSE)
+    
+    isReady = calllib('picohrdl', 'HRDLReady', hrdlHandle);
+    fprintf('.');
+    pause(0.1);
+
+end
+
+fprintf('\nData collection complete.\n');
+
+%% Retrieve the data
+
+% Allocate times and data buffer that will be large enough to accomodate
+% all the readings.
+
+times       = [];
+timesPtr    = libpointer('int32Ptr', zeros(numValuesPerChannel, 1, 'int32'));
+values      = [];
+valuesPtr   = libpointer('int32Ptr', zeros(numEnabledChannels * numValuesPerChannel, 1, 'int32'));
+overflow    = 0;
+overflowPtr = libpointer('int16Ptr', 0);
+
+numValuesCollectedPerChannel = calllib('picohrdl', 'HRDLGetTimesAndValues', hrdlHandle, timesPtr, valuesPtr, overflowPtr, int32(numValuesPerChannel));
+
+if (numValuesCollectedPerChannel > 0)
+   
+    times = timesPtr.Value;
+    values = valuesPtr.Value;
+    overflow = overflowPtr.Value;
+    
+else
+    
+    error('PicoHRDLBlockExample:NoDataValuesCollected', 'HRDLGetTimesAndValues() - No data values were collected.');
+    
+end
+
+% Extract data for each channel
+digitalData = values(1:numEnabledChannels:end);
+channel1Data = values(2:numEnabledChannels:end);
+
+% Convert channel 1 data to volts
+[channel1Data, vMaxCh1] = picohrdladc2volts(channel1Data, ch1Range, ch1MaxAdc);
+
+% Digital data is stored as bit flags
+digitalIO1Data = bitget(digitalData, 1, 'int32');
+
+%% Plot the data
+
+figure1 = figure('Name','PicoLog High-Resolution Data Logger Example - Block Data Capture', 'NumberTitle','off');
+axes1 = axes('Parent', figure1);
+
+if (hasDigitalPorts > 0)
+    
+    subplot(2, 1, 1)
+    
+end
+
+% Channel 1 data
+plot(times, channel1Data);
+title('Voltage vs. Time')
+xlabel('Time (ms)');
+ylabel('Voltage (V)');
+ylim([-vMaxCh1 vMaxCh1]);
+legend('Ch. 1');
+grid on;
+
+if (hasDigitalPorts > 0)
+    
+    % Digital I/O pin 1 data
+    subplot(2, 1, 2)
+
+    plot(times, digitalIO1Data);
+    title('Digital Input State vs. Time')
+    xlabel('Time (ms)');
+    ylabel('State');
+    ylim([-0.25 1.25]);
+    legend('D1');
+    grid on;
+    
+end
+
+%% Turn off digital output (ADC-24 only)
+% Set digital pin 2 to low
+
+if (hasDigitalPorts > 0)
+    
+    directionOut = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_2 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_3 + picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_4;
+    digitalOutPinState = 0; % Set digital I/O to high, others will remain as low.
+    enabledDigitalIn = picohrdlEnuminfo.enHRDLDigitalIoChannel.HRDL_DIGITAL_IO_CHANNEL_1;
+    
+    [status.setDigitalIOChannel] = calllib('picohrdl', 'HRDLSetDigitalIOChannel', hrdlHandle, int16(directionOut), int16(digitalOutPinState), int16(enabledDigitalIn));
+    
+end
+
+%% Close the connection
+
+status.closeUnit = calllib('picohrdl', 'HRDLCloseUnit', hrdlHandle);
+
+%% Unload the library
+
+if (libisloaded('picohrdl'))
+    
+    unloadlibrary('picohrdl');
+    
+end
+##### SOURCE END #####
+--></body></html>
