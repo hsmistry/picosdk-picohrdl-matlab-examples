@@ -1,6 +1,6 @@
 # PicoLog High-Resolution Data Logger MATLAB Examples
 
-*picosdk-picohrdl-matlab-examples* provides a MATLAB example demonstrating how to call shared library functions to acquire data from the PicoLog High-Resolution Data Loggers.
+*picosdk-picohrdl-matlab-examples* provides MATLAB examples demonstrating how to call shared library functions to acquire data from PicoLog High-Resolution Data Loggers.
 
 ## Supported models
 
@@ -58,6 +58,8 @@ Contributions are welcome. Please refer to our [guidelines for contributing](.gi
 ## Copyright and licensing
 
 See [LICENSE.md](LICENSE.md) for license terms. 
+
+*PicoLog* is a registered trademark of Pico Technology Ltd. 
 
 *MATLAB* is a registered trademark of The Mathworks, Inc.
 
