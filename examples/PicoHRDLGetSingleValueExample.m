@@ -14,7 +14,7 @@
 %
 % *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
 
-%% Clear console and close figures
+%% Clear console and close any open figure windows
 
 clc;
 close all;
@@ -82,6 +82,7 @@ end
 %% Open a connection
 
 hrdlHandle = calllib('picohrdl', 'HRDLOpenUnit');
+hrdlHandle = int16(hrdlHandle);
 
 if (hrdlHandle >= 1)
     
@@ -108,12 +109,12 @@ information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Varia
 
 for i = 0:(length(information) - 1)
     
-    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, length(infoString), i);
+    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, int16(length(infoString)), int16(i));
     
     disp([information{i + 1} infoString1]);
     
     % Only the ADC-24 has digital ports
-    if (i == 3)
+    if (i == PicoStatus.PICO_VARIANT_INFO)
     
         if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
            
@@ -133,7 +134,7 @@ fprintf('\n');
 
 %% Set mains noise rejection to 50 Hz
 
-[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, 0);
+[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, int16(PicoHRDLConstants.MAINS_50_HZ));
 
 %% Get minimum and maximum ADC counts available for the channel
 
@@ -142,27 +143,28 @@ maxAdcPtr = libpointer('int32Ptr', 0) ;
 channel   = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
 
 [status.getMinMaxAdcCounts] = calllib('picohrdl', 'HRDLGetMinMaxAdcCounts', hrdlHandle, ...
-    minAdcPtr, maxAdcPtr, channel);
+    minAdcPtr, maxAdcPtr, int16(channel));
 
 minAdc = minAdcPtr.Value;
 maxAdc = double(maxAdcPtr.Value);
 
 %% Get single value
 
-range = picohrdlEnuminfo.enHRDLRange.HRDL_1250_MV;
-conversionTime = picohrdlEnuminfo.enHRDLConversionTime.HRDL_100MS;
-singleEnded = 1;
-overflowPtr = libpointer('int16Ptr', 0);
-valuePtr = libpointer('int32Ptr', 0);
+range           = picohrdlEnuminfo.enHRDLRange.HRDL_1250_MV;
+conversionTime  = picohrdlEnuminfo.enHRDLConversionTime.HRDL_60MS;
+singleEnded     = PicoConstants.TRUE;
+overflowPtr     = libpointer('int16Ptr', 0);
+valuePtr        = libpointer('int32Ptr', 0);
 
-readings = zeros(50, 1);
+numReadings = 50;
+readings = zeros(numReadings, 1);
 
 disp('Starting data collection...');
 
 for i = 1:length(readings)
 
-    [status.getSingleValue] = calllib('picohrdl', 'HRDLGetSingleValue', hrdlHandle, channel, range, conversionTime, singleEnded, ...
-                                overflowPtr, valuePtr);
+    [status.getSingleValue] = calllib('picohrdl', 'HRDLGetSingleValue', hrdlHandle, int16(channel), int16(range), int16(conversionTime), ...
+                                    int16(singleEnded), overflowPtr, valuePtr);
 
     overflow = overflowPtr.Value;
     value = double(valuePtr.Value); % Raw ADC Count
@@ -185,14 +187,19 @@ samples = (1:length(readings));
 
 plot(axes1, samples, readings);
 title(axes1, 'Voltage vs. Sample number')
+xlabel(axes1, 'Sample');
 ylabel(axes1, 'Voltage (V)');
 ylim(axes1, [-vMax vMax]);
 grid(axes1, 'on');
 
 %% Close the connection
 
-closeStatus = calllib('picohrdl', 'HRDLCloseUnit', hrdlHandle);
+status.closeUnit = calllib('picohrdl', 'HRDLCloseUnit', hrdlHandle);
 
 %% Unload the library
 
-unloadlibrary('picohrdl');
+if (libisloaded('picohrdl'))
+    
+    unloadlibrary('picohrdl');
+    
+end

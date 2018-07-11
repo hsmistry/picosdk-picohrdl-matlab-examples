@@ -1,0 +1,445 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PicoLog High-Resolution Data Logger Series Single Value Example</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-07-11"><meta name="DC.source" content="PicoHRDLGetSingleValueExample.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PicoLog High-Resolution Data Logger Series Single Value Example</h1><!--introduction--><p>This script demonstrates how to:</p><div><ul><li>Open a connection to a PicoLog High-Resolution Data Logger</li><li>Display unit information</li><li>Take readings</li><li>Plot data</li><li>Close the connection to the unit</li></ul></div><p>Please refer to the <a href="https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf">ADC-20/ADC-24 High-Resolution Data Logger's Guide</a> for further information. This file can be edited to suit application requirements.</p><p><b>Copyright:</b> &copy; 2016-2018 Pico Technology Ltd. See LICENSE file for terms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear console and close any open figure windows</a></li><li><a href="#2">Load configuration information</a></li><li><a href="#3">Define any variables to be used throughout the script</a></li><li><a href="#4">Load shared library</a></li><li><a href="#5">Open a connection</a></li><li><a href="#6">Display unit information</a></li><li><a href="#7">Set mains noise rejection to 50 Hz</a></li><li><a href="#8">Get minimum and maximum ADC counts available for the channel</a></li><li><a href="#9">Get single value</a></li><li><a href="#10">Plot the data</a></li><li><a href="#11">Close the connection</a></li><li><a href="#12">Unload the library</a></li></ul></div><h2 id="1">Clear console and close any open figure windows</h2><pre class="codeinput">clc;
+close <span class="string">all</span>;
+</pre><h2 id="2">Load configuration information</h2><pre class="codeinput">PicoHRDLConfig;
+</pre><h2 id="3">Define any variables to be used throughout the script</h2><pre class="codeinput">hasDigitalPorts = PicoConstants.FALSE;
+</pre><h2 id="4">Load shared library</h2><pre class="codeinput"><span class="comment">% Indentify architecture and obtain function handle for the correct</span>
+<span class="comment">% prototype file.</span>
+
+archStr = computer(<span class="string">'arch'</span>);
+
+picoHRDLMFile = str2func(strcat(<span class="string">'picohrdlMFile_'</span>, archStr));
+
+<span class="keyword">if</span> (~libisloaded(<span class="string">'picohrdl'</span>))
+
+	<span class="keyword">if</span> ismac()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'libpicohrdl.dylib'</span>, picoHRDLMFile, <span class="string">'alias'</span>, <span class="string">'picohrdl'</span>);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library libpicohrdl.dylib not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">elseif</span> isunix()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'libpicohrdl.so'</span>, picoHRDLMFile, <span class="string">'alias'</span>, <span class="string">'picohrdl'</span>);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library libpicohrdl.so not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">elseif</span> ispc()
+
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary(<span class="string">'picohrdl.dll'</span>, picoHRDLMFile);
+
+		<span class="comment">% Check if the library is loaded</span>
+		<span class="keyword">if</span> ~libisloaded(<span class="string">'picohrdl'</span>)
+
+			error(<span class="string">'PicoHRDLGetSingleValueExample:LibaryNotLoaded'</span>, <span class="string">'Library picohrdl.dll not loaded.'</span>);
+
+		<span class="keyword">end</span>
+
+	<span class="keyword">else</span>
+
+		error(<span class="string">'PicoHRDLGetSingleValueExample:OSNotSupported'</span>, <span class="string">'Operating system not supported, please contact support@picotech.com'</span>);
+
+	<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><h2 id="5">Open a connection</h2><pre class="codeinput">hrdlHandle = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLOpenUnit'</span>);
+hrdlHandle = int16(hrdlHandle);
+
+<span class="keyword">if</span> (hrdlHandle &gt;= 1)
+
+    fprintf(<span class="string">'Device handle: %d\n'</span>, hrdlHandle);
+
+<span class="keyword">elseif</span> (hrdlHandle == 0)
+
+    error(<span class="string">'PicoHRDLGetSingleValueExample:UnitNotFound'</span>, <span class="string">'No device found.'</span>);
+
+<span class="keyword">else</span>
+
+    error(<span class="string">'PicoHRDLGetSingleValueExample:FailedToOpen'</span>, <span class="string">'Failed to open device.'</span>);
+
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Device handle: 16384
+</pre><h2 id="6">Display unit information</h2><pre class="codeinput">infoString = blanks(100);
+status.getInfo = zeros(7, 1, <span class="string">'int16'</span>);
+
+fprintf(<span class="string">'\nUnit information:-\n\n'</span>);
+
+information = {<span class="string">'Driver version: '</span>, <span class="string">'USB Version: '</span>, <span class="string">'Hardware version: '</span>, <span class="string">'Variant: '</span>, <span class="string">'Batch/Serial: '</span>, <span class="string">'Cal. date: '</span>, <span class="string">'Kernel driver version: '</span>};
+
+<span class="keyword">for</span> i = 0:(length(information) - 1)
+
+    [status.getInfo(i + 1, 1), infoString1] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetUnitInfo'</span>, hrdlHandle, infoString, int16(length(infoString)), int16(i));
+
+    disp([information{i + 1} infoString1]);
+
+    <span class="comment">% Only the ADC-24 has digital ports</span>
+    <span class="keyword">if</span> (i == PicoStatus.PICO_VARIANT_INFO)
+
+        <span class="keyword">if</span> (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
+
+            hasDigitalPorts = PicoConstants.TRUE;
+
+        <span class="keyword">else</span>
+
+            hasDigitalPorts = PicoConstants.FALSE;
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput">
+Unit information:-
+
+Driver version: 2.0.0.459
+USB Version: USB 1.1
+Hardware version: 1
+Variant: 24
+Batch/Serial: EP207/010
+Cal. date: 02Nov16
+Kernel driver version: PICOPP.SYS V1.0
+
+</pre><h2 id="7">Set mains noise rejection to 50 Hz</h2><pre class="codeinput">[status.setMains] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLSetMains'</span>, hrdlHandle, int16(PicoHRDLConstants.MAINS_50_HZ));
+</pre><h2 id="8">Get minimum and maximum ADC counts available for the channel</h2><pre class="codeinput">minAdcPtr = libpointer(<span class="string">'int32Ptr'</span>, 0);
+maxAdcPtr = libpointer(<span class="string">'int32Ptr'</span>, 0) ;
+channel   = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
+
+[status.getMinMaxAdcCounts] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetMinMaxAdcCounts'</span>, hrdlHandle, <span class="keyword">...</span>
+    minAdcPtr, maxAdcPtr, int16(channel));
+
+minAdc = minAdcPtr.Value;
+maxAdc = double(maxAdcPtr.Value);
+</pre><h2 id="9">Get single value</h2><pre class="codeinput">range           = picohrdlEnuminfo.enHRDLRange.HRDL_1250_MV;
+conversionTime  = picohrdlEnuminfo.enHRDLConversionTime.HRDL_60MS;
+singleEnded     = PicoConstants.TRUE;
+overflowPtr     = libpointer(<span class="string">'int16Ptr'</span>, 0);
+valuePtr        = libpointer(<span class="string">'int32Ptr'</span>, 0);
+
+numReadings = 50;
+readings = zeros(numReadings, 1);
+
+disp(<span class="string">'Starting data collection...'</span>);
+
+<span class="keyword">for</span> i = 1:length(readings)
+
+    [status.getSingleValue] = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLGetSingleValue'</span>, hrdlHandle, int16(channel), int16(range), int16(conversionTime), <span class="keyword">...</span>
+                                    int16(singleEnded), overflowPtr, valuePtr);
+
+    overflow = overflowPtr.Value;
+    value = double(valuePtr.Value); <span class="comment">% Raw ADC Count</span>
+
+    <span class="comment">% Convert value to volts</span>
+    [readings(i, 1), vMax] = picohrdladc2volts(value, range, maxAdc);
+
+    pause(0.1); <span class="comment">% Wait 100 ms</span>
+
+<span class="keyword">end</span>
+
+disp(<span class="string">'Data collection complete.'</span>);
+</pre><pre class="codeoutput">Starting data collection...
+Data collection complete.
+</pre><h2 id="10">Plot the data</h2><pre class="codeinput">figure1 = figure(<span class="string">'Name'</span>,<span class="string">'PicoLog High-Resolution Data Logger Example - Single Values Capture'</span>, <span class="string">'NumberTitle'</span>,<span class="string">'off'</span>);
+axes1 = axes(<span class="string">'Parent'</span>, figure1);
+
+samples = (1:length(readings));
+
+plot(axes1, samples, readings);
+title(axes1, <span class="string">'Voltage vs. Sample number'</span>)
+xlabel(axes1, <span class="string">'Sample'</span>);
+ylabel(axes1, <span class="string">'Voltage (V)'</span>);
+ylim(axes1, [-vMax vMax]);
+grid(axes1, <span class="string">'on'</span>);
+</pre><img vspace="5" hspace="5" src="PicoHRDLGetSingleValueExample_01.png" alt=""> <h2 id="11">Close the connection</h2><pre class="codeinput">status.closeUnit = calllib(<span class="string">'picohrdl'</span>, <span class="string">'HRDLCloseUnit'</span>, hrdlHandle);
+</pre><h2 id="12">Unload the library</h2><pre class="codeinput"><span class="keyword">if</span> (libisloaded(<span class="string">'picohrdl'</span>))
+
+    unloadlibrary(<span class="string">'picohrdl'</span>);
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% PicoLog High-Resolution Data Logger Series Single Value Example
+%
+% This script demonstrates how to:
+%
+% * Open a connection to a PicoLog High-Resolution Data Logger
+% * Display unit information
+% * Take readings
+% * Plot data
+% * Close the connection to the unit
+%
+% Please refer to the
+% <https://www.picotech.com/download/manuals/adc20-adc24-high-resolution-data-logger-users-guide.pdf ADC-20/ADC-24 High-Resolution Data Logger's Guide> for further information.
+% This file can be edited to suit application requirements.
+%
+% *Copyright:* © 2016-2018 Pico Technology Ltd. See LICENSE file for terms.
+
+%% Clear console and close any open figure windows
+
+clc;
+close all;
+
+%% Load configuration information
+
+PicoHRDLConfig;
+
+%% Define any variables to be used throughout the script
+
+hasDigitalPorts = PicoConstants.FALSE;
+
+%% Load shared library
+
+% Indentify architecture and obtain function handle for the correct
+% prototype file.
+    
+archStr = computer('arch');
+
+picoHRDLMFile = str2func(strcat('picohrdlMFile_', archStr));
+
+if (~libisloaded('picohrdl'))
+
+	if ismac()
+	   
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.dylib', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.dylib not loaded.');
+		
+		end
+		
+	elseif isunix()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('libpicohrdl.so', picoHRDLMFile, 'alias', 'picohrdl');
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library libpicohrdl.so not loaded.');
+		
+		end
+		
+	elseif ispc()
+		
+		[picohrdlNotFound, picohrdlWarnings] = loadlibrary('picohrdl.dll', picoHRDLMFile);
+		
+		% Check if the library is loaded
+		if ~libisloaded('picohrdl')
+		
+			error('PicoHRDLGetSingleValueExample:LibaryNotLoaded', 'Library picohrdl.dll not loaded.');
+		
+		end
+		
+	else
+		
+		error('PicoHRDLGetSingleValueExample:OSNotSupported', 'Operating system not supported, please contact support@picotech.com');
+		
+	end
+	
+end
+
+%% Open a connection
+
+hrdlHandle = calllib('picohrdl', 'HRDLOpenUnit');
+hrdlHandle = int16(hrdlHandle);
+
+if (hrdlHandle >= 1)
+    
+    fprintf('Device handle: %d\n', hrdlHandle);
+    
+elseif (hrdlHandle == 0)
+   
+    error('PicoHRDLGetSingleValueExample:UnitNotFound', 'No device found.');
+    
+else
+    
+    error('PicoHRDLGetSingleValueExample:FailedToOpen', 'Failed to open device.');
+    
+end
+
+%% Display unit information
+
+infoString = blanks(100);
+status.getInfo = zeros(7, 1, 'int16');
+
+fprintf('\nUnit information:-\n\n');
+
+information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Variant: ', 'Batch/Serial: ', 'Cal. date: ', 'Kernel driver version: '};
+
+for i = 0:(length(information) - 1)
+    
+    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, int16(length(infoString)), int16(i));
+    
+    disp([information{i + 1} infoString1]);
+    
+    % Only the ADC-24 has digital ports
+    if (i == PicoStatus.PICO_VARIANT_INFO)
+    
+        if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
+           
+            hasDigitalPorts = PicoConstants.TRUE;
+            
+        else
+            
+            hasDigitalPorts = PicoConstants.FALSE;
+            
+        end
+        
+    end
+        
+end
+
+fprintf('\n');
+
+%% Set mains noise rejection to 50 Hz
+
+[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, int16(PicoHRDLConstants.MAINS_50_HZ));
+
+%% Get minimum and maximum ADC counts available for the channel
+
+minAdcPtr = libpointer('int32Ptr', 0);
+maxAdcPtr = libpointer('int32Ptr', 0) ;
+channel   = picohrdlEnuminfo.enHRDLInputs.HRDL_ANALOG_IN_CHANNEL_1;
+
+[status.getMinMaxAdcCounts] = calllib('picohrdl', 'HRDLGetMinMaxAdcCounts', hrdlHandle, ...
+    minAdcPtr, maxAdcPtr, int16(channel));
+
+minAdc = minAdcPtr.Value;
+maxAdc = double(maxAdcPtr.Value);
+
+%% Get single value
+
+range           = picohrdlEnuminfo.enHRDLRange.HRDL_1250_MV;
+conversionTime  = picohrdlEnuminfo.enHRDLConversionTime.HRDL_60MS;
+singleEnded     = PicoConstants.TRUE;
+overflowPtr     = libpointer('int16Ptr', 0);
+valuePtr        = libpointer('int32Ptr', 0);
+
+numReadings = 50;
+readings = zeros(numReadings, 1);
+
+disp('Starting data collection...');
+
+for i = 1:length(readings)
+
+    [status.getSingleValue] = calllib('picohrdl', 'HRDLGetSingleValue', hrdlHandle, int16(channel), int16(range), int16(conversionTime), ...
+                                    int16(singleEnded), overflowPtr, valuePtr);
+
+    overflow = overflowPtr.Value;
+    value = double(valuePtr.Value); % Raw ADC Count
+
+    % Convert value to volts
+    [readings(i, 1), vMax] = picohrdladc2volts(value, range, maxAdc);
+
+    pause(0.1); % Wait 100 ms
+    
+end
+
+disp('Data collection complete.');
+
+%% Plot the data
+
+figure1 = figure('Name','PicoLog High-Resolution Data Logger Example - Single Values Capture', 'NumberTitle','off');
+axes1 = axes('Parent', figure1);
+
+samples = (1:length(readings));
+
+plot(axes1, samples, readings);
+title(axes1, 'Voltage vs. Sample number')
+xlabel(axes1, 'Sample');
+ylabel(axes1, 'Voltage (V)');
+ylim(axes1, [-vMax vMax]);
+grid(axes1, 'on');
+
+%% Close the connection
+
+status.closeUnit = calllib('picohrdl', 'HRDLCloseUnit', hrdlHandle);
+
+%% Unload the library
+
+if (libisloaded('picohrdl'))
+    
+    unloadlibrary('picohrdl');
+    
+end
+##### SOURCE END #####
+--></body></html>
