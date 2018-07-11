@@ -16,7 +16,7 @@
 %
 % *Copyright:* © 2018 Pico Technology Ltd. See LICENSE file for terms.
 
-%% Clear console and close figures
+%% Clear command window and close any open figure windows
 
 clc;
 close all;
