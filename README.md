@@ -41,7 +41,7 @@ Drivers are available for the following platforms. Refer to the subsections belo
 
 ### Programmer's Guides
 
-You can download the Programmer's Guide providing a description of the API functions for the usbtc08 driver from our [website](https://www.picotech.com/library/documentation).
+You can download the Programmer's Guide providing a description of the API functions for the picohrdl driver from our [website](https://www.picotech.com/library/documentation).
 
 ## Obtaining support
 
