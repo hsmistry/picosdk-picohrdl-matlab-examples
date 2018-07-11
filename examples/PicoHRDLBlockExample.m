@@ -114,12 +114,12 @@ information = {'Driver version: ', 'USB Version: ', 'Hardware version: ', 'Varia
 
 for i = 0:(length(information) - 1)
     
-    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, length(infoString), i);
+    [status.getInfo(i + 1, 1), infoString1] = calllib('picohrdl', 'HRDLGetUnitInfo', hrdlHandle, infoString, int16(length(infoString)), int16(i));
     
     disp([information{i + 1} infoString1]);
     
     % Only the ADC-24 has digital ports
-    if (i == 3)
+    if (i == PicoStatus.PICO_VARIANT_INFO)
     
         if (infoString1 == PicoHRDLConstants.MODEL_ADC_24)
            
@@ -146,7 +146,7 @@ fprintf('\n');
 
 %% Set mains noise rejection to 50 Hz
 
-[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, int16(0));
+[status.setMains] = calllib('picohrdl', 'HRDLSetMains', hrdlHandle, int16(PicoHRDLConstants.MAINS_50_HZ));
 
 %% Set channel 
 
